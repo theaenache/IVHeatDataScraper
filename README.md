@@ -33,10 +33,10 @@ sqlite3 imperial_valley_heat_deaths.db "SELECT title, heat_score FROM articles O
 ### Bilingual Support
 ```python
 # English keywords
-'heat-related death', 'heat stroke', 'died from heat'
+'heat-related death', 'heat stroke', 'died from heat', etc.
 
 # Spanish keywords  
-'muerte por calor', 'golpe de calor', 'hipertermia fatal'
+'muerte por calor', 'golpe de calor', 'hipertermia fatal', etc.
 ```
 
 ### Weighted Scoring Tool
