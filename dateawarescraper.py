@@ -1,14 +1,12 @@
 """
-DATE-AWARE IMPERIAL VALLEY HEAT DEATH SCRAPER
-==============================================
+DATE AWARE IV HRI SCRAPER
 
-This version lets you:
+
+This version lets us:
 1. Specify date range (e.g., June 1 - Sept 30, 2024)
 2. See total articles found in that range
 3. Choose how many to scrape (all, or a subset)
 4. Target specific summer months
-
-Perfect for testing summer heat death articles!
 """
 
 import sqlite3
@@ -40,7 +38,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # ============================================================================
-# CONFIGURATION
+# config
 # ============================================================================
 
 NEWS_SOURCES = [
@@ -68,7 +66,7 @@ NEWS_SOURCES = [
     }
 ]
 
-# Keywords (same as before)
+# keyword
 KEYWORDS_EN = {
     'primary_death': {
         'keywords': [
@@ -140,7 +138,7 @@ REQUEST_DELAY = 12
 MIN_SCORE_THRESHOLD = 10  # Only save articles with score >= 10
 
 # ============================================================================
-# DATABASE SETUP (Same as before)
+# DB setup
 # ============================================================================
 
 def init_database(db_path: str = 'imperial_valley_heat_deaths.db') -> sqlite3.Connection:
@@ -185,7 +183,7 @@ def init_database(db_path: str = 'imperial_valley_heat_deaths.db') -> sqlite3.Co
     return conn
 
 # ============================================================================
-# SCORING FUNCTIONS (Same as before)
+# Scoring Functions
 # ============================================================================
 
 def calculate_heat_score(text: str, language: str = 'en') -> Tuple[float, List[Dict], Dict]:
@@ -246,7 +244,7 @@ def classify_relevance(score: float) -> str:
         return "NOT_RELEVANT"
 
 # ============================================================================
-# DATE-AWARE URL DISCOVERY
+# Date Aware Url Disc
 # ============================================================================
 
 def is_valid_article_url(url: str) -> bool:
@@ -399,7 +397,7 @@ def discover_articles_in_date_range(source: Dict, start_date: datetime,
     return discovered_articles
 
 # ============================================================================
-# SCRAPING FUNCTIONS
+# Scrape functions
 # ============================================================================
 
 def get_url_hash(url: str) -> str:
@@ -491,7 +489,7 @@ def main():
     print("="*80)
     
     # Get date range from user
-    print("\n📅 DATE RANGE SELECTION")
+    print("\nDATE RANGE SELECTION")
     print("-" * 80)
     print("Enter date range to scrape (or use presets for summer months)")
     print("\nPresets:")
@@ -563,7 +561,7 @@ def main():
         print(f"  {source_name:30} {count:4} articles")
     
     if len(all_discovered) == 0:
-        print("\n⚠️  No articles found in date range.")
+        print("\n!!!!!No articles found in date range.")
         print("This could mean:")
         print("  - Website structure doesn't support date filtering")
         print("  - No articles published in this date range")
@@ -687,7 +685,7 @@ def main():
             print(f"   {category} | {date}")
     
     conn.close()
-    print(f"\n✅ Complete! Database: imperial_valley_heat_deaths.db")
+    print(f"\nComplete! Database: imperial_valley_heat_deaths.db")
 
 if __name__ == '__main__':
     main()
