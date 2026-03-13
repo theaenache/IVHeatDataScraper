@@ -3,10 +3,8 @@ DATE AWARE IV HRI SCRAPER
 
 
 This version lets us:
-1. Specify date range (e.g., June 1 - Sept 30, 2024)
-2. See total articles found in that range
-3. Choose how many to scrape (all, or a subset)
-4. Target specific summer months
+Specify date range (e.g., June 1 - Sept 30, 2024), See total articles found in that range, 
+Choose how many to scrape (all, or a subset) so we can target specific summer months!
 """
 
 import sqlite3
