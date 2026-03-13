@@ -1,10 +1,8 @@
 """
-DATE AWARE IV HRI SCRAPER
+Date Aware IV HRI Scraper
 
-
-This version lets us:
-Specify date range (e.g., June 1 - Sept 30, 2024), See total articles found in that range, 
-Choose how many to scrape (all, or a subset) so we can target specific summer months!
+This version now has the capability to let us specify the exact date range, see total articles found in that range, and choose how many to scrape.
+This lets us target specific summer months in our scrape. 
 """
 
 import sqlite3
@@ -36,7 +34,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # ============================================================================
-# config
+# CONFIGS
 # ============================================================================
 
 NEWS_SOURCES = [
@@ -64,7 +62,7 @@ NEWS_SOURCES = [
     }
 ]
 
-# keyword
+# Keywords 
 KEYWORDS_EN = {
     'primary_death': {
         'keywords': [
@@ -133,10 +131,10 @@ KEYWORDS_EN = {
 }
 
 REQUEST_DELAY = 12
-MIN_SCORE_THRESHOLD = 10  # Only save articles with score >= 10
+MIN_SCORE_THRESHOLD = 10  # Only save articles with score >= 10, easily editable if this is too lenient
 
 # ============================================================================
-# DB setup
+# DATABASE SETUP
 # ============================================================================
 
 def init_database(db_path: str = 'imperial_valley_heat_deaths.db') -> sqlite3.Connection:
@@ -181,7 +179,7 @@ def init_database(db_path: str = 'imperial_valley_heat_deaths.db') -> sqlite3.Co
     return conn
 
 # ============================================================================
-# Scoring Functions
+# SCORING FUNCTIONS 
 # ============================================================================
 
 def calculate_heat_score(text: str, language: str = 'en') -> Tuple[float, List[Dict], Dict]:
@@ -242,7 +240,7 @@ def classify_relevance(score: float) -> str:
         return "NOT_RELEVANT"
 
 # ============================================================================
-# Date Aware Url Disc
+# DATE-AWARE URL DISCOVERY
 # ============================================================================
 
 def is_valid_article_url(url: str) -> bool:
@@ -395,7 +393,7 @@ def discover_articles_in_date_range(source: Dict, start_date: datetime,
     return discovered_articles
 
 # ============================================================================
-# Scrape functions
+# SCRAPING FUNCTIONS
 # ============================================================================
 
 def get_url_hash(url: str) -> str:
@@ -486,47 +484,44 @@ def main():
     print("DATE-AWARE IMPERIAL VALLEY HEAT DEATH SCRAPER")
     print("="*80)
     
-    # Get date range from user
-    print("\nDATE RANGE SELECTION")
+    # Get date range from user - DIRECT INPUT
+    print("\n📅 DATE RANGE SELECTION")
     print("-" * 80)
-    print("Enter date range to scrape (or use presets for summer months)")
-    print("\nPresets:")
-    print("  1. Summer 2024 (June 1 - Sept 30, 2024)")
-    print("  2. Summer 2023 (June 1 - Sept 30, 2023)")
-    print("  3. Summer 2022 (June 1 - Sept 30, 2022)")
-    print("  4. All Summer 2020-2024")
-    print("  5. Custom date range")
+    print("Enter the exact date range you want to scrape.")
+    print("\nFormat: YYYY-MM-DD (e.g., 2024-06-01)")
+    print("\nCommon ranges:")
+    print("  Summer 2024: 2024-06-01 to 2024-09-30")
+    print("  Summer 2023: 2023-06-01 to 2023-09-30")
+    print("  July 2024:   2024-07-01 to 2024-07-31")
+    print("  All 2024:    2024-01-01 to 2024-12-31")
+    print("-" * 80)
     
-    choice = input("\nSelect option (1-5): ").strip()
-    
-    if choice == '1':
-        start_date = datetime(2024, 6, 1)
-        end_date = datetime(2024, 9, 30)
-    elif choice == '2':
-        start_date = datetime(2023, 6, 1)
-        end_date = datetime(2023, 9, 30)
-    elif choice == '3':
-        start_date = datetime(2022, 6, 1)
-        end_date = datetime(2022, 9, 30)
-    elif choice == '4':
-        start_date = datetime(2020, 6, 1)
-        end_date = datetime(2024, 9, 30)
-    elif choice == '5':
-        start_str = input("Start date (YYYY-MM-DD): ").strip()
-        end_str = input("End date (YYYY-MM-DD): ").strip()
+    # Get start date
+    while True:
+        start_str = input("\nEnter START date (YYYY-MM-DD): ").strip()
         try:
             start_date = datetime.strptime(start_str, '%Y-%m-%d')
-            end_date = datetime.strptime(end_str, '%Y-%m-%d')
+            break
         except:
-            print("Invalid date format. Using Summer 2024 as default.")
-            start_date = datetime(2024, 6, 1)
-            end_date = datetime(2024, 9, 30)
-    else:
-        print("Invalid choice. Using Summer 2024 as default.")
-        start_date = datetime(2024, 6, 1)
-        end_date = datetime(2024, 9, 30)
+            print("Invalid format. Use YYYY-MM-DD (e.g., 2024-06-01)")
+    
+    # Get end date
+    while True:
+        end_str = input("Enter END date (YYYY-MM-DD): ").strip()
+        try:
+            end_date = datetime.strptime(end_str, '%Y-%m-%d')
+            if end_date < start_date:
+                print("*edit!!* End date must be after start date")
+                continue
+            break
+        except:
+            print("Invalid format. Use YYYY-MM-DD (e.g., 2024-09-30)")
     
     print(f"\n✓ Selected: {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}")
+    
+    # Calculate duration
+    duration = (end_date - start_date).days
+    print(f"✓ Duration: {duration} days")
     
     # Initialize database
     conn = init_database()
@@ -559,7 +554,7 @@ def main():
         print(f"  {source_name:30} {count:4} articles")
     
     if len(all_discovered) == 0:
-        print("\n!!!!!No articles found in date range.")
+        print("\n!!No articles found in date range.")
         print("This could mean:")
         print("  - Website structure doesn't support date filtering")
         print("  - No articles published in this date range")
@@ -568,34 +563,34 @@ def main():
     
     # Let user choose how many to scrape
     print(f"\n{'='*80}")
-    print("PHASE 2: SELECTION")
+    print("ARTICLE SELECTION")
     print(f"{'='*80}")
-    print(f"Found {len(all_discovered)} articles. How many would you like to scrape?")
-    print(f"  1. All {len(all_discovered)} articles")
-    print(f"  2. First 50 articles")
-    print(f"  3. First 20 articles")
-    print(f"  4. Custom number")
+    print(f"Total articles found in date range: {len(all_discovered)}")
+    print(f"\nHow many would you like to scrape?")
+    print(f"  - Enter a number (e.g., 50, 100, 255)")
+    print(f"  - Or press Enter to scrape ALL {len(all_discovered)} articles")
     
-    selection = input("\nSelect option (1-4): ").strip()
+    selection = input(f"\nEnter number of articles to scrape (or press Enter for all): ").strip()
     
-    if selection == '1':
+    if selection == '':
         articles_to_scrape = all_discovered
-    elif selection == '2':
-        articles_to_scrape = all_discovered[:50]
-    elif selection == '3':
-        articles_to_scrape = all_discovered[:20]
-    elif selection == '4':
-        try:
-            num = int(input(f"Enter number (1-{len(all_discovered)}): "))
-            articles_to_scrape = all_discovered[:num]
-        except:
-            print("Invalid number. Scraping first 20.")
-            articles_to_scrape = all_discovered[:20]
+        print(f"\n✓ Will scrape all {len(articles_to_scrape)} articles")
     else:
-        print("Invalid choice. Scraping first 20.")
-        articles_to_scrape = all_discovered[:20]
-    
-    print(f"\n✓ Will scrape {len(articles_to_scrape)} articles")
+        try:
+            num = int(selection)
+            if num > len(all_discovered):
+                print(f"\n⚠️ Requested {num} but only {len(all_discovered)} available")
+                articles_to_scrape = all_discovered
+                print(f"✓ Will scrape all {len(articles_to_scrape)} articles")
+            elif num < 1:
+                print(f"\n⚠️ Invalid number. Will scrape 20 articles")
+                articles_to_scrape = all_discovered[:20]
+            else:
+                articles_to_scrape = all_discovered[:num]
+                print(f"\n✓ Will scrape {len(articles_to_scrape)} articles")
+        except:
+            print(f"\n⚠️ Invalid input. Will scrape 50 articles")
+            articles_to_scrape = all_discovered[:50]
     
     # Scraping phase
     print(f"\n{'='*80}")
@@ -683,7 +678,7 @@ def main():
             print(f"   {category} | {date}")
     
     conn.close()
-    print(f"\nComplete! Database: imperial_valley_heat_deaths.db")
+    print(f"\nComplete! DB: imperial_valley_heat_deaths.db")
 
 if __name__ == '__main__':
     main()
