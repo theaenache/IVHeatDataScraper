@@ -1,6 +1,4 @@
 """
-PRIORITY-BASED SEARCH SCRAPER FOR IMPERIAL VALLEY HEAT DEATHS
-==============================================================
 
 Searches iteratively by keyword priority:
 1. Primary death keywords (10 pts) - "heat death", "heat fatality"
