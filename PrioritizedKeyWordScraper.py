@@ -400,7 +400,7 @@ def scrape_article_with_retry(url: str, max_retries: int = MAX_RETRIES) -> Optio
             if '429' in str(e):
                 if attempt < max_retries - 1:
                     wait_time = RETRY_DELAY * (attempt + 1)
-                    logger.warning(f"  ⚠️ Rate limited - waiting {wait_time}s (retry {attempt+1}/{max_retries})")
+                    logger.warning(f"  Rate limited: waiting {wait_time}s (retry {attempt+1}/{max_retries})")
                     time.sleep(wait_time)
                     continue
             logger.error(f"  ✗ Error: {e}")
@@ -471,7 +471,7 @@ def main():
     print("  6. Environmental (2 pts) - 'heat wave', 'extreme heat'")
     
     # Get parameters
-    print("\n📅 DATE RANGE")
+    print("\nDATE RANGE")
     print("-" * 80)
     
     while True:
@@ -480,18 +480,18 @@ def main():
             start_date = datetime.strptime(start_str, '%Y-%m-%d')
             break
         except:
-            print("❌ Invalid format. Use YYYY-MM-DD")
+            print("Invalid format. Use YYYY-MM-DD")
     
     while True:
         end_str = input("End date (YYYY-MM-DD): ").strip()
         try:
             end_date = datetime.strptime(end_str, '%Y-%m-%d')
             if end_date < start_date:
-                print("❌ End date must be after start date")
+                print("End date must be after start date")
                 continue
             break
         except:
-            print("❌ Invalid format. Use YYYY-MM-DD")
+            print("Invalid format. Use YYYY-MM-DD")
     
     max_articles_str = input("\nMax total articles (default 50): ").strip()
     max_articles = int(max_articles_str) if max_articles_str else 50
@@ -507,7 +507,7 @@ def main():
     discovered_urls = search_by_priority(start_date, end_date, max_articles)
     
     if len(discovered_urls) == 0:
-        print("\n⚠️  No articles found.")
+        print("\nNo articles found.")
         return
     
     # Scraping phase
@@ -589,7 +589,7 @@ def main():
     print(f"\n✨ Hit rate: {hit_rate:.1f}%")
     
     conn.close()
-    print(f"\n✅ Complete! Database: imperial_valley_heat_deaths.db")
+    print(f"\nComplete! Database: imperial_valley_heat_deaths.db")
 
 if __name__ == '__main__':
     main()
