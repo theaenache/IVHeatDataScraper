@@ -349,7 +349,7 @@ def main():
             urls = [line.strip() for line in f if line.strip()]
         print(f"\n✓ Loaded {len(urls)} URLs from {url_file}")
     except FileNotFoundError:
-        print(f"\n❌ File not found: {url_file}")
+        print(f"\nFile NOT FOUND: {url_file}")
         return
     
     conn = init_database()
@@ -430,10 +430,10 @@ def main():
     print(f"Errors: {stats['errors']}")
     
     hit_rate = (stats['saved'] / stats['processed'] * 100) if stats['processed'] > 0 else 0
-    print(f"\n✨ Hit rate: {hit_rate:.1f}%")
+    print(f"\n Hit rate: {hit_rate:.1f}%")
     
     conn.close()
-    print(f"\n✅ Complete! Database: imperial_valley_heat_deaths.db")
+    print(f"\n Complete! Database: imperial_valley_heat_deaths.db")
 
 if __name__ == '__main__':
     main()
