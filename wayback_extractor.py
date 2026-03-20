@@ -1,11 +1,5 @@
 """
-WAYBACK MACHINE ARTICLE EXTRACTOR
-==================================
-
-Automatically extracts all Imperial Valley Press article URLs
-from Archive.org snapshots for a given date range.
-
-NO RATE LIMITING - Uses archive.org instead of live site!
+#HALLELUJAH!! NO RATE LIMITING!!!!! Uses archive.org instead of live site!
 """
 
 import requests
@@ -43,7 +37,7 @@ def get_snapshots(url: str, start_date: str, end_date: str) -> List[str]:
     Returns:
         List of timestamps
     """
-    print(f"\n🔍 Querying Wayback Machine for snapshots...")
+    print(f"\nQuerying Wayback Machine for snapshots...")
     print(f"   URL: {url}")
     print(f"   Date range: {start_date} to {end_date}")
     
@@ -66,11 +60,11 @@ def get_snapshots(url: str, start_date: str, end_date: str) -> List[str]:
         # First row is headers, skip it
         timestamps = [row[0] for row in data[1:]]
         
-        print(f"   ✅ Found {len(timestamps)} snapshots")
+        print(f" Found {len(timestamps)} snapshots")
         return timestamps
         
     except Exception as e:
-        print(f"   ❌ Error: {e}")
+        print(f" Error: {e}")
         return []
 
 def extract_article_urls_from_snapshot(base_url: str, timestamp: str) -> Set[str]:
@@ -120,7 +114,7 @@ def extract_article_urls_from_snapshot(base_url: str, timestamp: str) -> Set[str
         return article_urls
         
     except Exception as e:
-        print(f"      ❌ Error extracting from snapshot: {e}")
+        print(f"  Error extracting from snapshot: {e}")
         return set()
 
 def main():
@@ -148,12 +142,12 @@ def main():
     print(f"\n📊 Total snapshots to process: {len(all_timestamps)}")
     
     if len(all_timestamps) == 0:
-        print("\n❌ No snapshots found. Try different date range or URL.")
+        print("\nNo snapshots found. Try different date range or URL.")
         return
     
     # Limit to avoid overwhelming (sample evenly)
     if len(all_timestamps) > 50:
-        print(f"\n⚠️  Found {len(all_timestamps)} snapshots - sampling 50 for speed")
+        print(f"\nFound {len(all_timestamps)} snapshots - sampling 50 for speed")
         # Sample evenly across the date range
         step = len(all_timestamps) // 50
         all_timestamps = all_timestamps[::step][:50]
@@ -190,12 +184,12 @@ def main():
         for url in sorted(all_article_urls):
             f.write(url + '\n')
     
-    print(f"\n✅ SUCCESS!")
-    print(f"\n📊 RESULTS:")
+    print(f"\nSUCCESS!")
+    print(f"\nRESULTS:")
     print(f"   Total unique articles found: {len(all_article_urls)}")
     print(f"   Saved to: {output_file}")
     
-    print(f"\n📋 SAMPLE URLS:")
+    print(f"\nSAMPLE URLS:")
     for i, url in enumerate(sorted(all_article_urls)[:10], 1):
         print(f"   {i}. {url[:70]}...")
     
